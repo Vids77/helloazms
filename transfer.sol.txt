@@ -1,0 +1,64 @@
+// SPDX-License-Identifier: GPL-3.0
+
+
+
+pragma solidity >=0.7.0 <0.9.0;
+
+
+
+contract transfer {
+    uint256 public Count = 0;
+    mapping(address => custDetails) public Details;
+    mapping(address => string) public ack;
+    address public owner;
+    address[] public submittedDetails;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    struct custDetails {
+        uint _id;
+        string _Name;
+        uint256 _accNo;
+        uint256 _aadharNo;
+        string _Image;
+        string _amount;
+        
+        
+    }
+  
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    function add(
+        string memory _Name,
+        uint256 _accNo,
+        uint256 _aadharNo,
+        string memory _Image,
+        string memory _amount
+    )
+        public
+    {
+        Details[msg.sender] = custDetails(Count, _Name, _accNo, _aadharNo, _Image, _amount);
+        
+    }
+    
+    function send(address addr, string calldata text) external onlyOwner {
+        ack[addr] = text;
+    }
+    
+    function Submit(address payable userAddress) payable external {
+        submittedDetails.push(userAddress);
+        userAddress.transfer(msg.value);
+    }
+    
+    function getSubmittedDetails() external onlyOwner view returns (address[] memory){
+        return(submittedDetails);
+    }
+    
+    
+    
+}
